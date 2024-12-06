@@ -1,16 +1,16 @@
-from abc import ABC, abstractmethod
-from ...schemas.user import *
 from typing import Tuple
+from ...schemas.user import *
+from abc import ABC, abstractmethod
 
-class UserService(ABC):
+class UserServiceABC(ABC):
     @abstractmethod
-    async def add_user(user: User) -> Tuple[bool, int]:
-        ...
-
-    @abstractmethod
-    async def get_user_info(user_id: int) -> User:
+    async def authentificate_user(self, credentials: UserCredentials) -> int | None:
         ...
     
     @abstractmethod
-    async def update_user_info(user_id: int) -> Tuple[bool, int]:
+    async def add_user(self, user: User) -> Tuple[bool, str]:
+        ...
+    
+    @abstractmethod
+    async def get_user_info(self, user_id: int) -> User | None:
         ...

@@ -23,21 +23,21 @@ class PosgreSQLConnectionWrapper(AsyncDBConnectionWrapperABC):
             pass
         return self._connection is None
 
-    async def fetch(self, query: str, *query_params) -> Any | None:
+    async def fetch(self, *args, **kwargs) -> Any | None:
         try:
-            return await self._connection.fetch(query=query, *query_params)
+            return await self._connection.fetch(*args, **kwargs)
         finally:
             return None
 
-    async def fetchrow(self, query: str, *query_params) -> Any | None:
+    async def fetchrow(self, *args, **kwargs) -> Any | None:
         try:
-            return await self._connection.fetchrow(query=query, *query_params)
+            return await self._connection.fetchrow(*args, **kwargs)
         finally:
             return None
 
-    async def execute(self, query: str, *query_params) -> str | None:
+    async def execute(self, *args, **kwargs) -> str | None:
         try:
-            return await self._connection.execute(query=query, *query_params)
+            return await self._connection.execute(*args, **kwargs)
         finally:
             return None
 
