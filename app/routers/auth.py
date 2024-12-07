@@ -2,10 +2,10 @@ from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse, JSONResponse
 from datetime import datetime, timedelta
-from ..schemas.user import *
-from ..services.token import TokenService
-from ..services.user.employee import EmployeeService
-from ..services.user.passenger import PassengerService
+from schemas.user import *
+from services.token import TokenService
+from services.user.employee import EmployeeService
+from services.user.passenger import PassengerService
 
 templates = Jinja2Templates(directory="templates")
 
@@ -27,11 +27,27 @@ async def passenger_login_page(request: Request):
 @router.post("/login")
 async def passenger_login(request: Request, credentials: UserCredentials = Form()):
     passenger_id = await passenger_service.authentificate_user(credentials=credentials)
+
     if passenger_id is None:
         return JSONResponse({"message": "Error"})
+
     token = token_service.create_token(passenger_id, credentials.login)
     response = RedirectResponse(url="/")
     response.set_cookie(key="AccessToken", value=token, max_age=datetime.now() + timedelta(hours=1))
+    return response
+
+@router.get("/signup")
+async def passenger_signup_page(request: Request):
+    if await token_service.get_user_id(request.cookies.get("AccessToken")) is not None:
+        return RedirectResponse(url="/", status_code=302)
+    return templates.TemplateResponse("signup.html", {"request": request})
+
+@router.post("/signup")
+async def passenger_signup(request: Request, passenger: Passenger = Form()):
+    status, msg = await passenger_service.add_user(passenger=passenger)
+    if status:
+        return RedirectResponse(url="/login")
+    return JSONResponse({"status": status, "message": msg})
 
 @router.get("/emplogin")
 async def employee_login_page(request: Request):
@@ -40,13 +56,16 @@ async def employee_login_page(request: Request):
     return RedirectResponse(url="/workplace", status_code=302)
 
 @router.post("/emplogin")
-async def employee_login(request: Request, credentials: UserCredentials):
+async def employee_login(request: Request, credentials: UserCredentials = Form()):
     employee_id = await employee_service.authentificate_user(credentials=credentials)
+
     if employee_id is None:
         return JSONResponse({"message": "Error"})
-    token = token_service.create_token(employee_id, credentials.login)
+    
+    token = await token_service.create_token(employee_id, credentials.login)
     response = RedirectResponse(url="/workplace")
     response.set_cookie(key="AccessToken", value=token, max_age=datetime.now() + timedelta(hours=1))
+    return response
 
 @router.post("/logout")
 async def logout(request: Request):

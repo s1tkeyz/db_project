@@ -1,19 +1,19 @@
-from ..abstract.user import UserServiceABC
+from abstract.user import UserServiceABC
 from typing import Tuple
-from ...schemas.user import *
-from ...database.handlers.postgresql import PosgreSQLConnectionWrapper
+from schemas.user import *
+from database.handlers.postgresql import PosgreSQLConnectionWrapper
 from passlib.context import CryptContext
 
-class EmployeeService(UserServiceABC):
+class PassengerService(UserServiceABC):
     def __init__(self):
         self._crypt_ctx = CryptContext(schemes=["sha256_crypt"])
 
     async def authentificate_user(self, credentials: UserCredentials) -> int | None:
         conn = PosgreSQLConnectionWrapper()
         query = """
-        SELECT employee_id, password
-        FROM employees
-        WHERE login = $1
+        SELECT passenger_id, password
+        FROM passengers
+        WHERE email = $1
         """
         try:
             await conn.connect()
@@ -22,47 +22,48 @@ class EmployeeService(UserServiceABC):
             if row is None:
                 return None
             if self._crypt_ctx.verify(credentials.password, row["password"]):
-                return row["employee_id"]
+                return row["passenger_id"]
             return None
         finally:
             return None
     
-    async def add_user(self, employee: Employee) -> Tuple[bool, str]:
+    async def add_user(self, passenger: Passenger) -> Tuple[bool, str]:
         conn = PosgreSQLConnectionWrapper()
         try:
             await conn.connect()
             query = """
-            SELECT employee_id
-            FROM employees
-            WHERE login = $1
+            SELECT passenger_id
+            FROM passengers
+            WHERE email = $1
             """
-            data = await conn.fetchrow(query, employee.login)
+            data = await conn.fetchrow(query, passenger.email)
             if data is not None:
-                return False, "Employee with this login already exists"
+                return False, "Passenger with this E-Mail already exists"
             query = """
-            INSERT INTO employees
-            (login, password, name, surname, is_super)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO passengers
+            (name, surname, sex, birth_date, passport_number, email, password)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             """
-            await conn.execute(query, **employee.model_dump())
+            passenger.password = self._crypt_ctx.hash(passenger.password)
+            await conn.execute(query, **passenger.model_dump())
             await conn.close()
             return True, "OK"
         finally:
             return False, "Query error"
     
-    async def get_user_info(self, employee_id: int) -> Employee | None:
+    async def get_user_info(self, passenger_id: int) -> Passenger | None:
         query = """
-        SELECT login, password, name, surname, is_super
-        FROM employees
-        WHERE employee_id = $1
+        SELECT name, surname, sex, birth_date, passport_number, email, password
+        FROM passengers
+        WHERE passenger_id = $1
         """
         conn = PosgreSQLConnectionWrapper()
         try:
             await conn.connect()
-            row = await conn.fetchrow(query, employee_id)
+            row = await conn.fetchrow(query, passenger_id)
             conn.close()
             if row is None:
                 return None
-            return Employee(**row)
+            return Passenger(**row)
         finally:
             return None

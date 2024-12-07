@@ -20,13 +20,13 @@ CREATE TABLE IF NOT EXISTS passengers (
     "birth_date" DATE NOT NULL,
     "passport_number" BIGINT NOT NULL,
     "email" VARCHAR(32) NOT NULL,
-    "password" VARCHAR(64) NOT NULL
+    "password" VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS employees (
     "employee_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "login" VARCHAR(32) NOT NULL,
-    "password" VARCHAR(64) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
     "name" VARCHAR(16) NOT NULL,
     "surname" VARCHAR(32) NOT NULL,
     "is_super" BOOLEAN NOT NULL
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS flights (
 CREATE TABLE IF NOT EXISTS departures (
     "departure_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "flight_id" BIGINT NOT NULL REFERENCES flights(flight_id),
-    "status" VARCHAR(255) NOT NULL,
+    "status" VARCHAR(16) NOT NULL,
     "scheduled_time" TIMESTAMP(0) WITH TIME zone NOT NULL,
     "actual_time" TIMESTAMP(0) WITH TIME zone NOT NULL,
     "gate" SMALLINT NOT NULL

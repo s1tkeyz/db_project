@@ -1,0 +1,281 @@
+<html><head><base href="." /></head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #e6f3ff, #f0f9ff);
+    position: relative;
+    overflow-x: hidden;
+    padding: 2rem;
+  }
+
+  .clouds {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    top: 0;
+    left: 0;
+  }
+
+  .schedule-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(100, 100, 255, 0.1);
+    z-index: 2;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .plane-icon {
+    fill: #4a90e2;
+    animation: fly 3s infinite ease-in-out;
+  }
+
+  @keyframes fly {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .filter-group label {
+    display: block;
+    color: #34495e;
+    margin-bottom: 0.5rem;
+  }
+
+  .filter-group select, .filter-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e3f2fd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  .filter-group select:focus, .filter-group input:focus {
+    outline: none;
+    border-color: #4a90e2;
+  }
+
+  .flights-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .flights-table th, .flights-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e3f2fd;
+  }
+
+  .flights-table th {
+    background: #f8fafd;
+    color: #2c3e50;
+  }
+
+  .flights-table tr:hover {
+    background: #f5f9ff;
+  }
+
+  .status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .status.on-time {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .status.delayed {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .status.boarding {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  button {
+    padding: 0.8rem 1.5rem;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background: #357abd;
+  }
+
+  .refresh-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+</style>
+
+<body>
+  <div class="clouds">
+    <svg width="100%" height="100%" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+      <path fill="#ffffff" opacity="0.3" d="M0 600 Q 250 450 500 600 T 1000 600 V1000 H0 Z"></path>
+      <path fill="#ffffff" opacity="0.2" d="M0 700 Q 250 550 500 700 T 1000 700 V1000 H0 Z"></path>
+    </svg>
+  </div>
+
+  <div class="schedule-container">
+    <div class="logo">
+      <svg class="plane-icon" width="50" height="50" viewBox="0 0 24 24">
+        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+      </svg>
+    </div>
+    
+    <h1>Flight Schedule</h1>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label for="flightType">Flight Type</label>
+        <select id="flightType">
+          <option value="all">All Flights</option>
+          <option value="departures">Departures</option>
+          <option value="arrivals">Arrivals</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="dateFilter">Date</label>
+        <input type="date" id="dateFilter" value="2024-01-25">
+      </div>
+
+      <div class="filter-group">
+        <label for="destination">Destination</label>
+        <select id="destination">
+          <option value="all">All Destinations</option>
+          <option value="nyc">New York</option>
+          <option value="lon">London</option>
+          <option value="par">Paris</option>
+          <option value="tok">Tokyo</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="refresh-button" onclick="refreshFlights()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+      </svg>
+      Refresh
+    </button>
+
+    <table class="flights-table">
+      <thead>
+        <tr>
+          <th>Flight</th>
+          <th>Destination</th>
+          <th>Time</th>
+          <th>Gate</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="flightsTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Sample flight data
+    const flights = [
+      { id: "AA101", destination: "New York", time: "09:30", gate: "A1", status: "on-time" },
+      { id: "BA205", destination: "London", time: "10:15", gate: "B3", status: "delayed" },
+      { id: "AF405", destination: "Paris", time: "11:00", gate: "C2", status: "boarding" },
+      { id: "JL089", destination: "Tokyo", time: "12:45", gate: "D4", status: "on-time" },
+      { id: "EK203", destination: "Dubai", time: "14:20", gate: "B1", status: "on-time" }
+    ];
+
+    function getStatusClass(status) {
+      switch(status) {
+        case 'on-time': return 'on-time';
+        case 'delayed': return 'delayed';
+        case 'boarding': return 'boarding';
+        default: return '';
+      }
+    }
+
+    function updateFlightsTable() {
+      const tbody = document.getElementById('flightsTableBody');
+      tbody.innerHTML = '';
+      
+      flights.forEach(flight => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${flight.id}</td>
+          <td>${flight.destination}</td>
+          <td>${flight.time}</td>
+          <td>${flight.gate}</td>
+          <td><span class="status ${getStatusClass(flight.status)}">${flight.status.toUpperCase()}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function refreshFlights() {
+      // Simulate loading new data
+      const loadingRow = document.createElement('tr');
+      loadingRow.innerHTML = '<td colspan="5" style="text-align: center;">Refreshing flight data...</td>';
+      document.getElementById('flightsTableBody').innerHTML = '';
+      document.getElementById('flightsTableBody').appendChild(loadingRow);
+      
+      // Simulate API call delay
+      setTimeout(updateFlightsTable, 1000);
+    }
+
+    // Initial load
+    updateFlightsTable();
+
+    // Add event listeners for filters
+    document.getElementById('flightType').addEventListener('change', updateFlightsTable);
+    document.getElementById('dateFilter').addEventListener('change', updateFlightsTable);
+    document.getElementById('destination').addEventListener('change', updateFlightsTable);
+  </script>
+</body></html>
