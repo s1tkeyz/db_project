@@ -111,6 +111,21 @@
         gap: 20px;
     }
     
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    
+    .leave-button {
+        background: linear-gradient(to bottom, #ff4444, #cc0000);
+        border-color: #cc0000;
+    }
+    
+    .leave-button:hover {
+        background: linear-gradient(to bottom, #cc0000, #990000);
+    }
+    
     </style></head><body>
     
     <div class="checkin-container">
@@ -164,7 +179,10 @@
     
             <div id="validationStatus" class="validation-status"></div>
     
-            <button type="submit">PROCESS CHECK-IN</button>
+            <div class="button-container">
+                <button type="submit">PROCESS CHECK-IN</button>
+                <button type="button" class="leave-button" onclick="handleLeaveWorkplace()">LEAVE WORKPLACE</button>
+            </div>
         </form>
     
         <div class="status-bar">
@@ -204,6 +222,18 @@
                 validationStatus.textContent = 'ERROR: Invalid booking reference or passport number';
             }
         }, 1000);
+    }
+    
+    function handleLeaveWorkplace() {
+        if (confirm('Are you sure you want to leave your workplace? All unsaved data will be lost.')) {
+            const validationStatus = document.getElementById('validationStatus');
+            validationStatus.className = 'validation-status';
+            validationStatus.textContent = 'Logging out...';
+            
+            setTimeout(() => {
+                window.location.href = 'https://www.airport.com/login';
+            }, 1000);
+        }
     }
     
     function updateTimestamp() {
