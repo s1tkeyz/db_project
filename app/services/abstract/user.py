@@ -1,5 +1,5 @@
 from typing import Tuple
-from ...schemas.user import *
+from schemas.user import *
 from abc import ABC, abstractmethod
 
 class UserServiceABC(ABC):

@@ -1,10 +1,8 @@
-FROM python:latest
+FROM python:3.12-alpine
 
 WORKDIR /app
 
-COPY app/requirements.txt .
+COPY . .
 RUN pip install -r requirements.txt
-
-COPY app/ .
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

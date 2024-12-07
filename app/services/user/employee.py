@@ -1,4 +1,4 @@
-from abstract.user import UserServiceABC
+from ..abstract.user import UserServiceABC
 from typing import Tuple
 from schemas.user import *
 from database.handlers.postgresql import PosgreSQLConnectionWrapper

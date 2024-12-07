@@ -18,14 +18,14 @@ CREATE TABLE IF NOT EXISTS passengers (
     "surname" VARCHAR(32) NOT NULL,
     "sex" VARCHAR(6) NOT NULL,
     "birth_date" DATE NOT NULL,
-    "passport_number" BIGINT NOT NULL,
-    "email" VARCHAR(32) NOT NULL,
+    "passport_number" BIGINT NOT NULL UNIQUE,
+    "email" VARCHAR(32) NOT NULL UNIQUE,
     "password" VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS employees (
     "employee_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "login" VARCHAR(32) NOT NULL,
+    "login" VARCHAR(32) NOT NULL UNIQUE,
     "password" VARCHAR(255) NOT NULL,
     "name" VARCHAR(16) NOT NULL,
     "surname" VARCHAR(32) NOT NULL,

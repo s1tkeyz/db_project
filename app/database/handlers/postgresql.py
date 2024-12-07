@@ -16,12 +16,15 @@ class PosgreSQLConnectionWrapper(AsyncDBConnectionWrapperABC):
     PostgreSQL connection wrapper (asyncpg driver)
     """
 
+    def __init__(self):
+        self._connection: asyncpg.Connection | None = None
+
     async def connect(self, *args, **kwargs) -> bool:
         try:
-            self._connection = await asyncpg.connect(**DB_CONFIG)
-        except ConnectionError as e:
-            pass
-        return self._connection is None
+            self._connection = await asyncpg.connect(dsn=f"postgres://{DB_CONFIG["user"]}:{DB_CONFIG["password"]}@{DB_CONFIG["host"]}:{DB_CONFIG["port"]}/{DB_CONFIG["database"]}")
+        except Exception as e:
+            print(f"DB connection failed: {type(e)}")
+        return self._connection is not None
 
     async def fetch(self, *args, **kwargs) -> Any | None:
         try:

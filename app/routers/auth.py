@@ -32,7 +32,7 @@ async def passenger_login(request: Request, credentials: UserCredentials = Form(
         return JSONResponse({"message": "Error"})
 
     token = token_service.create_token(passenger_id, credentials.login)
-    response = RedirectResponse(url="/")
+    response = RedirectResponse(url="/", status_code=302)
     response.set_cookie(key="AccessToken", value=token, max_age=datetime.now() + timedelta(hours=1))
     return response
 
@@ -45,8 +45,6 @@ async def passenger_signup_page(request: Request):
 @router.post("/signup")
 async def passenger_signup(request: Request, passenger: Passenger = Form()):
     status, msg = await passenger_service.add_user(passenger=passenger)
-    if status:
-        return RedirectResponse(url="/login")
     return JSONResponse({"status": status, "message": msg})
 
 @router.get("/emplogin")

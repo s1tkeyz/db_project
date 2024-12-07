@@ -6,7 +6,7 @@ SECRET_KEY: str = os.getenv("SECRET_KEY")
 ALGORITHM: str = os.getenv("ALGORITHM")
 
 class TokenService:
-    async def create_token(user_id: int, login: str) -> str:
+    async def create_token(self, user_id: int, login: str) -> str:
         data = {
             "sub": login,
             "id": user_id,
@@ -14,7 +14,7 @@ class TokenService:
         }
         return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
-    async def get_user_id(token: str | None) -> int | None:
+    async def get_user_id(self, token: str | None) -> int | None:
         if token is None:
             return None
         try:

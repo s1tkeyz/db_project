@@ -166,31 +166,36 @@
     
     <h1>Create Account</h1>
     
-    <form id="signupForm">
+    <form id="signupForm" method="post" action="/signup">
       <div class="form-row">
         <div class="form-group">
-          <label for="firstName">First Name</label>
-          <input type="text" id="firstName" required>
+          <label for="name">First Name</label>
+          <input type="text" id="name" name="name" required>
         </div>
         <div class="form-group">
           <label for="surname">Surname</label>
-          <input type="text" id="surname" required>
+          <input type="text" id="surname" name="surname" required>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="birthDate">Date of Birth</label>
-        <input type="date" id="birthDate" required>
+        <label for="passport_number">Passport</label>
+        <input type="text" id="passport_number" name="passport_number" required>
+      </div>
+
+      <div class="form-group">
+        <label for="birth_date">Date of Birth</label>
+        <input type="date" id="birth_date" name="birth_date" equired>
       </div>
 
       <div class="form-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" name="email" required>
       </div>
 
       <div class="form-group">
         <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" required pattern="[0-9]{10,}" title="Please enter a valid phone number">
+        <input type="tel" id="phone" name="phone" required pattern="[0-9]{10,}" title="Please enter a valid phone number">
       </div>
 
       <div class="form-group">
@@ -202,20 +207,17 @@
           <label>
             <input type="radio" name="sex" value="female" required> Female
           </label>
-          <label>
-            <input type="radio" name="sex" value="other" required> Other
-          </label>
         </div>
       </div>
       
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" name="password" required>
       </div>
 
       <div class="form-group">
-        <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" required>
+        <label for="confirm">Confirm Password</label>
+        <input type="password" id="confirm" required>
       </div>
       
       <button type="submit">Sign Up</button>
@@ -226,7 +228,7 @@
     </div>
   </div>
 
-  <script>
+  <!-- <script>
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const firstName = document.getElementById('firstName').value;
@@ -249,5 +251,5 @@
       // For demo purposes, show success message
       alert('Account created successfully!');
     });
-  </script>
+  </script> -->
 </body></html>
