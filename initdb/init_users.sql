@@ -1,23 +1,21 @@
-CREATE USER readonly_user WITH PASSWORD '12345678';
+CREATE ROLE reader WITH LOGIN PASSWORD '12345678';
 
-GRANT CONNECT ON DATABASE airport TO readonly_user;
-GRANT USAGE ON SCHEMA public TO readonly_user;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly_user;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO reader;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO reader;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readonly_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO reader;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO reader;
 
---GRANT SELECT ON airlines TO readonly_user;
---GRANT SELECT ON destinations TO readonly_user;
---GRANT SELECT ON flights TO readonly_user;
---GRANT SELECT ON departures TO readonly_user;
---GRANT SELECT ON tickets TO readonly_user;
---GRANT SELECT ON passengers TO readonly_user;
---GRANT SELECT ON employees TO readonly_user;
---GRANT SELECT ON boarding_pass TO readonly_user;
+CREATE ROLE super WITH LOGIN PASSWORD '12345678' SUPERUSER;
 
---GRANT SELECT ON checkin_data TO readonly_user;
---GRANT SELECT ON timetable TO readonly_user;
---GRANT SELECT ON flights_pivot TO readonly_user;
---GRANT SELECT ON airlines_list TO readonly_user;
---GRANT SELECT ON superusers TO readonly_user;
---GRANT SELECT ON departures_pivot TO readonly_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO super;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO super;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO super;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO super;
+
+CREATE USER reader1 WITH PASSWORD '12345678';
+GRANT reader TO reader1;
+
+--CREATE USER super1 WITH PASSWORD '12345678';
+GRANT super TO super1;
