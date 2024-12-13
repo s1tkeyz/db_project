@@ -1,16 +1,27 @@
-from typing import Tuple
 from schemas.user import *
 from abc import ABC, abstractmethod
 
 class UserServiceABC(ABC):
     @abstractmethod
-    async def authentificate_user(self, credentials: UserCredentials) -> int | None:
+    async def auth_user(self, credentials: UserCredentials) -> int | None:
+        ...
+
+    @abstractmethod
+    async def add_user(self, user: User) -> tuple[bool, str]:
         ...
     
     @abstractmethod
-    async def add_user(self, user: User) -> Tuple[bool, str]:
+    async def remove_user(self, user_id: int) -> tuple[bool, str]:
+        ...
+
+    @abstractmethod
+    async def get_user_info(self, user_id: int) -> User:
         ...
     
     @abstractmethod
-    async def get_user_info(self, user_id: int) -> User | None:
+    async def edit_user(self, user_id: int, user: User) -> tuple[bool, str]:
+        ...
+
+    @abstractmethod
+    async def get_users(self) -> list[User]:
         ...

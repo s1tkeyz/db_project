@@ -1,0 +1,376 @@
+<html><head><base href="." />
+    <style>
+        @font-face {
+            font-family: 'MS Sans Serif';
+            src: local('Microsoft Sans Serif'), local('Tahoma');
+        }
+    
+        body {
+            background-color: #333333;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    
+        .window {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            box-shadow: 2px 2px 0px #000;
+            padding: 2px;
+            width: 800px;
+        }
+    
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 6px;
+            color: white;
+        }
+    
+        .title-bar-text {
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+    
+        .window-content {
+            padding: 10px;
+            background-color: #c0c0c0;
+        }
+    
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #808080;
+            margin-bottom: 10px;
+        }
+    
+        .tab {
+            padding: 4px 15px;
+            font-size: 11px;
+            cursor: pointer;
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            margin-right: 2px;
+        }
+    
+        .tab.active {
+            background: #c0c0c0;
+            border: 2px solid #555;
+            border-right-color: #fff;
+            border-bottom-color: #c0c0c0;
+            position: relative;
+            top: 2px;
+        }
+    
+        .tab-content {
+            display: none;
+            padding: 10px;
+        }
+    
+        .tab-content.active {
+            display: block;
+        }
+    
+        .input-field {
+            margin: 6px 0;
+        }
+    
+        label {
+            font-size: 11px;
+            display: block;
+            margin-bottom: 2px;
+        }
+    
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 2px 4px;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            background-color: #fff;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            font-size: 11px;
+            box-sizing: border-box;
+        }
+    
+        .button {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            padding: 4px 15px;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            font-size: 11px;
+            cursor: pointer;
+            margin: 5px;
+            min-width: 70px;
+        }
+    
+        .button:active {
+            border: 2px solid #555;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+    
+        .buttons-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+    
+        .status-bar {
+            border-top: 2px solid #808080;
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+    
+        th, td {
+            border: 1px solid #808080;
+            padding: 4px;
+            text-align: left;
+        }
+    
+        th {
+            background-color: #d4d0c8;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    System Dashboard
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('employees')">Employees</div>
+                    <div class="tab active" onclick="switchTab('passengers')">Passengers</div>
+                    <div class="tab" onclick="switchTab('airlines')">Airlines</div>
+                    <div class="tab" onclick="switchTab('destinations')">Destinations</div>
+                    <div class="tab" onclick="switchTab('flights')">Flights</div>
+                    <div class="tab" onclick="switchTab('departures')">Departures</div>
+                    <div class="tab" onclick="switchTab('exit')">Leave</div>
+                </div>
+    
+                <div id="employees" class="tab-content active">
+                    <form id="addEmployeeForm" method="post" action="/add-employee">
+                        <div class="input-field">
+                            <label for="login">Employee Login:</label>
+                            <input type="text" id="login" name="login" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="password">Employee Password:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="name">Employee Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="surname">Employee Surname:</label>
+                            <input type="text" id="surname" name="surname" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="is_super">Is Superuser?</label>
+                            <select id="is_super" name="is_super">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Add Employee</button>
+                        </div>
+                    </form>
+
+                    <form id="removeEmployeeForm" method="post" action="/remove-employee">
+                        <div class="input-field">
+                            <label for="login">Employee Login:</label>
+                            <input type="text" id="login" name="login" required>
+                        </div>
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Remove Employee</button>
+                        </div>
+                    </form>
+
+                    <button type="button" class="button" onclick="window.location.href='/tableview/employees'">View Employees Table</button>
+                </div>
+                
+                <div id="passengers" class="tab-content">
+                    <form id="viewPassengersForm" method="get" action="/tableview/passengers">
+                        <div class="buttons-container">
+                            <button type="submit" class="button">View Passengers Table</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="airlines" class="tab-content">
+                    <form id="addAirlineForm" method="post" action="/add-airline">
+                        <div class="input-field">
+                            <label for="name">Airline Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="icao_code">ICAO code:</label>
+                            <input type="text" id="icao_code" name="icao_code" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="iata_code">IATA code:</label>
+                            <input type="text" id="iata_code" name="iata_code" required>
+                        </div>
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Add Airline</button>
+                        </div>
+                    </form>
+
+                    <form id="viewAirlinesForm" method="get" action="/tableview/airlines">
+                        <div class="buttons-container">
+                            <button type="submit" class="button">View Airlines Table</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="destinations" class="tab-content">
+                    <form id="addDestinationForm" method="post" action="/add-destination">
+                        <div class="input-field">
+                            <label for="name">Destination Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="longitude">Longitude:</label>
+                            <input type="number" step="any" id="longitude" name="longitude" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="latitude">Latitude:</label>
+                            <input type="number" step="any" id="latitude" name="latitude" required>
+                        </div>
+                        
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Add Destination</button>
+                        </div>
+                    </form>
+
+                    <form id="viewDestinationsForm" method="get" action="/tableview/destinations">
+                        <div class="buttons-container">
+                            <button type="submit" class="button">View Destinations Table</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="flights" class="tab-content">
+                    <form id="addFlightForm" method="post" action="/add-flight">
+                        <div class="input-field">
+                            <label for="airline_id">Select Airline:</label>
+                            <select id="airline_id" name="airline_id">
+                                {% for airline in airlines %}
+                                <option value={{ airline.airline_id }}>{{ airline.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="destination_id">Select Destination:</label>
+                            <select id="destination_id" name="destination_id">
+                                {% for destination in destinations %}
+                                <option value={{ destination.destination_id }}>{{ destination.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="number">Flight Number:</label>
+                            <input type="number" step="1" id="number" name="number" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="is_charter">Is Charter?</label>
+                            <select id="is_charter" name="is_charter">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Add Flight</button>
+                        </div>
+                    </form>
+
+                    <form id="viewFlightsForm" method="get" action="/tableview/flights">
+                        <div class="buttons-container">
+                            <button type="submit" class="button">View Flights Table</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="departures" class="tab-content">
+                    <form id="addDepartureForm" method="post" action="/add-departure">
+                        <div class="input-field">
+                            <label for="flight_id">Flight:</label>
+                            <select id="flight_id" name="flight_id">
+                                {% for flight in flights %}
+                                <option value={{ flight.flight_id }}>{{ flight.airline_iata }} {{ flight.flight_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="scheduled_time">Scheduled Time:</label>
+                            <input type="datetime-local" id="scheduled_time" name="scheduled_time" required>
+                        </div>
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Add Departure</button>
+                        </div>
+                    </form>
+
+                    <form id="viewDeparturesForm" method="get" action="/tableview/departures">
+                        <div class="buttons-container">
+                            <button type="submit" class="button">View Departures Table</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="exit" class="tab-content">
+                    <form id="leaveForm" method="post" action="/logout">
+                        <div class="buttons-container">
+                            <button type="submit" class="button">Leave</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="status-bar">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <circle cx="8" cy="8" r="7" fill="#c0c0c0" stroke="#000"/>
+                        <text x="8" y="12" text-anchor="middle" font-size="11" font-family="MS Sans Serif">i</text>
+                    </svg>
+                    Ready
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            function switchTab(tabName) {
+                // Hide all tabs and remove active class
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+    
+                // Show selected tab and add active class
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            }
+        </script>
+    </body>
+    </html>

@@ -1,250 +1,180 @@
-<html><head><base href="." /><title>Airport Check-in System</title><style>
-    body {
-        background-color: #d3d3d3;
-        font-family: "Courier New", monospace;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-    }
-    
-    .checkin-container {
-        background-color: #ffffff;
-        border: 2px solid #808080;
-        padding: 20px;
-        width: 800px;
-        box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-        margin-top: 40px;
-    }
-    
-    .header {
-        text-align: center;
-        border-bottom: 1px solid #808080;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-    
-    .form-section {
-        background-color: #f0f0f0;
-        border: 1px solid #808080;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 5px;
-        color: #404040;
-        font-weight: bold;
-    }
-    
-    input[type="text"],
-    input[type="date"],
-    input[type="number"],
-    select {
-        width: calc(100% - 12px);
-        padding: 8px;
-        border: 1px solid #808080;
-        background-color: #ffffff;
-        font-family: "Courier New", monospace;
-        box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .validation-status {
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #808080;
-        display: none;
-    }
-    
-    .validation-status.success {
-        background-color: #90EE90;
-        border-color: #006400;
-        display: block;
-    }
-    
-    .validation-status.error {
-        background-color: #FFB6C1;
-        border-color: #8B0000;
-        display: block;
-    }
-    
-    button {
-        padding: 8px 15px;
-        background: linear-gradient(to bottom, #909090, #808080);
-        color: white;
-        border: 1px solid #707070;
-        cursor: pointer;
-        font-family: "Courier New", monospace;
-        margin-top: 10px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        min-width: 150px;
-    }
-    
-    button:hover {
-        background: linear-gradient(to bottom, #808080, #707070);
-    }
-    
-    button:active {
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-        transform: translateY(1px);
-    }
-    
-    .status-bar {
-        margin-top: 20px;
-        font-size: 12px;
-        color: #404040;
-        text-align: center;
-        border-top: 1px solid #808080;
-        padding-top: 10px;
-    }
-    
-    .grid-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-    
-    .button-container {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
-    
-    .leave-button {
-        background: linear-gradient(to bottom, #ff4444, #cc0000);
-        border-color: #cc0000;
-    }
-    
-    .leave-button:hover {
-        background: linear-gradient(to bottom, #cc0000, #990000);
-    }
-    
-    </style></head><body>
-    
-    <div class="checkin-container">
-        <div class="header">
-            <h2>AIRPORT CHECK-IN SYSTEM</h2>
-            <div>Passenger Processing Terminal v1.0</div>
-        </div>
-    
-        <form class="form-section" onsubmit="handleSubmit(event)">
-            <div class="grid-container">
-                <div class="form-group">
-                    <label for="bookingRef">BOOKING REFERENCE:</label>
-                    <input type="text" id="bookingRef" required placeholder="Enter booking reference">
-                </div>
-    
-                <div class="form-group">
-                    <label for="lastName">LAST NAME:</label>
-                    <input type="text" id="lastName" required placeholder="Enter last name">
-                </div>
-    
-                <div class="form-group">
-                    <label for="passportNum">PASSPORT NUMBER:</label>
-                    <input type="text" id="passportNum" required placeholder="Enter passport number">
-                </div>
-    
-                <div class="form-group">
-                    <label for="flightNum">FLIGHT NUMBER:</label>
-                    <input type="text" id="flightNum" required placeholder="Enter flight number">
-                </div>
-    
-                <div class="form-group">
-                    <label for="numBags">NUMBER OF BAGS:</label>
-                    <input type="number" id="numBags" required min="0" max="10" value="0">
-                </div>
-    
-                <div class="form-group">
-                    <label for="totalWeight">TOTAL WEIGHT (KG):</label>
-                    <input type="number" id="totalWeight" required min="0" max="100" value="0">
-                </div>
-            </div>
-    
-            <div class="form-group">
-                <label for="specialItems">SPECIAL ITEMS:</label>
-                <select id="specialItems" multiple>
-                    <option value="fragile">FRAGILE</option>
-                    <option value="oversized">OVERSIZED</option>
-                    <option value="sports">SPORTS EQUIPMENT</option>
-                    <option value="medical">MEDICAL EQUIPMENT</option>
-                </select>
-            </div>
-    
-            <div id="validationStatus" class="validation-status"></div>
-    
-            <div class="button-container">
-                <button type="submit">PROCESS CHECK-IN</button>
-                <button type="button" class="leave-button" onclick="handleLeaveWorkplace()">LEAVE WORKPLACE</button>
-            </div>
-        </form>
-    
-        <div class="status-bar">
-            Terminal Status: ONLINE | Gate: A22 | Last Check-in: <span id="lastCheckIn"></span>
-        </div>
-    </div>
-    
-    <script>
-    function handleSubmit(event) {
-        event.preventDefault();
-        
-        const bookingRef = document.getElementById('bookingRef').value;
-        const lastName = document.getElementById('lastName').value;
-        const passportNum = document.getElementById('passportNum').value;
-        const flightNum = document.getElementById('flightNum').value;
-        const numBags = parseInt(document.getElementById('numBags').value);
-        const totalWeight = parseInt(document.getElementById('totalWeight').value);
-        const specialItems = Array.from(document.getElementById('specialItems').selectedOptions).map(option => option.value);
-    
-        const validationStatus = document.getElementById('validationStatus');
-    
-        // Simulate processing delay
-        validationStatus.className = 'validation-status';
-        validationStatus.textContent = 'Processing...';
-    
-        setTimeout(() => {
-            // Mock validation - in real system this would check against a database
-            if (bookingRef.length >= 6 && passportNum.length >= 8) {
-                validationStatus.className = 'validation-status success';
-                validationStatus.textContent = `CHECK-IN SUCCESSFUL!\n
-                    Passenger validated
-                    Luggage processed: ${numBags} bags, ${totalWeight}kg
-                    Special items: ${specialItems.length ? specialItems.join(', ') : 'None'}`;
-                updateTimestamp();
-            } else {
-                validationStatus.className = 'validation-status error';
-                validationStatus.textContent = 'ERROR: Invalid booking reference or passport number';
-            }
-        }, 1000);
-    }
-    
-    function handleLeaveWorkplace() {
-        if (confirm('Are you sure you want to leave your workplace? All unsaved data will be lost.')) {
-            const validationStatus = document.getElementById('validationStatus');
-            validationStatus.className = 'validation-status';
-            validationStatus.textContent = 'Logging out...';
-            
-            setTimeout(() => {
-                window.location.href = 'https://www.airport.com/login';
-            }, 1000);
+<html><head><base href="." />
+    <style>
+        @font-face {
+            font-family: 'MS Sans Serif';
+            src: local('Microsoft Sans Serif'), local('Tahoma');
         }
-    }
     
-    function updateTimestamp() {
-        const now = new Date();
-        const formatted = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-        document.getElementById('lastCheckIn').textContent = formatted;
-    }
+        body {
+            background-color: #333333;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
     
-    // Initialize timestamp and update every minute
-    updateTimestamp();
-    setInterval(updateTimestamp, 60000);
-    </script>
+        .window {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            box-shadow: 2px 2px 0px #000;
+            padding: 2px;
+            width: 480px;
+        }
     
-    </body></html>
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 6px;
+            color: white;
+        }
+    
+        .title-bar-text {
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+    
+        .window-content {
+            padding: 10px;
+            background-color: #c0c0c0;
+        }
+    
+        .input-field {
+            margin: 6px 0;
+        }
+    
+        label {
+            font-size: 11px;
+            display: block;
+            margin-bottom: 2px;
+        }
+    
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 2px 4px;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            background-color: #fff;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            font-size: 11px;
+            box-sizing: border-box;
+        }
+    
+        .button {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            padding: 4px 15px;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            font-size: 11px;
+            cursor: pointer;
+            margin: 5px;
+            min-width: 70px;
+        }
+    
+        .button:active {
+            border: 2px solid #555;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+    
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+    
+        .status-bar {
+            border-top: 2px solid #808080;
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+        }
+    
+        .luggage-section {
+            border: 1px solid #808080;
+            padding: 6px;
+            margin: 8px 0;
+        }
+    
+        .luggage-section-title {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+    
+    </style>
+    </head>
+    <body>
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    Passenger Check-in System
+                </div>
+            </div>
+            <div class="window-content">
+                <form id="checkInForm" method="post" action="/checkin">
+                    <div class="input-field">
+                        <label for="airline_name">Airline:</label>
+                        <input type="text" id="airline_name" name="airline_name" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="flight_number">Flight Number:</label>
+                        <input type="number" step="1" id="flight_number" name="flight_number" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="destination">Destination:</label>
+                        <input type="text" id="destination" name="destination" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="passenger_name">Passenger Name:</label>
+                        <input type="text" id="passenger_name" name="passenger_name" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="passenger_surname">Passenger Surname:</label>
+                        <input type="text" id="passenger_surname" name="passenger_surname" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="passport_number">Passport Number:</label>
+                        <input type="text" id="passport_number" name="passport_number" required>
+                    </div>
+                    <div class="buttons-container">
+                        <button type="submit" class="button">Check In</button>
+                        <button type="button" class="button" onclick="clearForm()">Clear</button>
+                        <form id="logoutForm" method="post" action="/logout">
+                            <button type="submit" class="button">Leave</button>
+                        </form>
+                    </div>
+                </form>
+                <div class="status-bar">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <circle cx="8" cy="8" r="7" fill="#c0c0c0" stroke="#000"/>
+                        <text x="8" y="12" text-anchor="middle" font-size="11" font-family="MS Sans Serif">i</text>
+                    </svg>
+                    Ready for check-in
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            function clearForm() {
+                document.getElementById('checkInForm').reset();
+                document.getElementById('airline').focus();
+                document.querySelector('.status-bar').innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <circle cx="8" cy="8" r="7" fill="#c0c0c0" stroke="#000"/>
+                        <text x="8" y="12" text-anchor="middle" font-size="11" font-family="MS Sans Serif">i</text>
+                    </svg>
+                    Ready for check-in
+                `;
+            }
+        </script>
+    </body>
+    </html>
