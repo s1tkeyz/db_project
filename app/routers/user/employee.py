@@ -72,6 +72,24 @@ async def add_employee(request: Request, data: Employee = Form()):
         "message": msg
     })
 
+@router.post("/remove-employee")
+async def remove_employee(request: Request, employee_id: int = Form()):
+    id, emp = await token_service.get_user_info(request.cookies.get("AccessToken"))
+    if id is None:
+        return RedirectResponse(url="/emplogin", status_code=303)
+    if not emp:
+        return JSONResponse({
+            "status": False,
+            "message": "Forbidden"
+        }, status_code=403)
+    ok, msg = await employee_service.remove_user(employee_id)
+    if ok:
+        return RedirectResponse(url="/workplace", status_code=303)
+    return JSONResponse({
+        "status": ok,
+        "message": msg
+    })
+
 router.get("/tableview/{table_name:path}")
 async def table_view(table_name: str, request: Request):
     id, emp = await token_service.get_user_info(request.cookies.get("AccessToken"))

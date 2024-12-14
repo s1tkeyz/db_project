@@ -47,7 +47,16 @@ class EmployeeService(UserServiceABC):
         return (False, "Employee with this login already exists")
         
     async def remove_user(self, employee_id: int) -> tuple[bool, str]:
-        ...
+        query = """
+        DELETE FROM employees
+        WHERE employee_id = $1
+        """
+        conn = AsyncpgConnectionWrapper()
+        if not await conn.connect():
+            return (False, "DB connection failed")
+        await conn.execute(query, employee_id)
+        return (True, "OK")
+
 
     async def get_user_info(self, employee_id: int) -> Employee:
         query = """

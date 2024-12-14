@@ -1,4 +1,3 @@
-import uvicorn
 from routers.user import employee, passenger
 from routers import checkin, scheduling, ticket
 from fastapi import FastAPI
