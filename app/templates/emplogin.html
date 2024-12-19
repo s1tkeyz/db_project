@@ -1,0 +1,149 @@
+<html><head><base href="." />
+    <style>
+        @font-face {
+            font-family: 'MS Sans Serif';
+            src: local('Microsoft Sans Serif'), local('Tahoma');
+        }
+    
+        body {
+            background-color: #333333; /* Changed to dark grey */
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    
+        .window {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            box-shadow: 2px 2px 0px #000;
+            padding: 2px;
+            width: 300px;
+        }
+    
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 6px;
+            color: white;
+        }
+    
+        .title-bar-text {
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+    
+        .window-content {
+            padding: 10px;
+            background-color: #c0c0c0;
+        }
+    
+        .input-field {
+            margin: 10px 0;
+        }
+    
+        label {
+            font-size: 11px;
+            display: block;
+            margin-bottom: 3px;
+        }
+    
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 3px 5px;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            background-color: #fff;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            font-size: 11px;
+            box-sizing: border-box;
+        }
+    
+        .button {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            padding: 4px 15px;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', sans-serif;
+            font-size: 11px;
+            cursor: pointer;
+            margin: 5px;
+            min-width: 70px;
+        }
+    
+        .button:active {
+            border: 2px solid #555;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+    
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    
+        .status-bar {
+            border-top: 2px solid #808080;
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+        }
+    
+    </style>
+    </head>
+    <body>
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    System Login
+                </div>
+            </div>
+            <div class="window-content">
+                <form id="loginForm" method="post" action="/emplogin">
+                    <div class="input-field">
+                        <label for="login">Login:</label>
+                        <input type="text" id="login" name="login" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="buttons-container">
+                        <button type="submit" class="button">OK</button>
+                        <button type="button" class="button" onclick="clearForm()">Cancel</button>
+                    </div>
+                </form>
+                <div class="status-bar">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <circle cx="8" cy="8" r="7" fill="#c0c0c0" stroke="#000"/>
+                        <text x="8" y="12" text-anchor="middle" font-size="11" font-family="MS Sans Serif">i</text>
+                    </svg>
+                    Press OK to log in
+                </div>
+            </div>
+        </div>
+    
+        <script> 
+            function clearForm() {
+                document.getElementById('loginForm').reset();
+                document.getElementById('username').focus();
+                document.querySelector('.status-bar').innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <circle cx="8" cy="8" r="7" fill="#c0c0c0" stroke="#000"/>
+                        <text x="8" y="12" text-anchor="middle" font-size="11" font-family="MS Sans Serif">i</text>
+                    </svg>
+                    Press OK to log in
+                `;
+            }
+        </script>
+    </body>
+    </html>
