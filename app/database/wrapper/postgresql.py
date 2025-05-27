@@ -4,6 +4,7 @@ import asyncpg
 from typing import Any, Literal
 from database.abstract.wrapper import AsyncConnectionWrapperABC
 
+
 logger = logging.getLogger(__name__)
 
 DB_CONFIG = {
@@ -11,7 +12,7 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER"),
     "password": os.getenv("DB_PASSWORD"),
     "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT"),
+    "port": 5432 #os.getenv("DB_PORT"),
 }
 
 DB_RO_CONFIG = {
@@ -40,7 +41,7 @@ class AsyncpgConnectionWrapper(AsyncConnectionWrapperABC):
             logger.info("Successfully connected to DB")
             return True
         except Exception as e:
-            logger.info(f"Failed database connection: {e}")
+            print(f"Failed database connection: {e}")
             return False
     
     async def fetch(self, *args, **kwargs) -> Any:

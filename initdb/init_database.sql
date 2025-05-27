@@ -37,7 +37,7 @@ INSERT INTO employees
 VALUES
 (
     'superuser',
-    '$5$rounds=535000$/Tg5YDi3jAgHYz9c$9g4d7G.Tqo32kdhlFCrUQinwCFTeeWh46SdNB4qh0z6',
+    '$5$rounds=535000$lUvZoLUMnXaEoGG3$z9HSIct8QmsR/VD.8.RASW1xXKst6ltUXSkmrzmfm39',
     'Alex',
     'Vienna',
     'true'
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS departures (
     "status" VARCHAR(16) NOT NULL,
     "scheduled_time" TIMESTAMP(0) WITH TIME zone NOT NULL,
     "actual_time" TIMESTAMP(0) WITH TIME zone NOT NULL,
-    "gate" SMALLINT NOT NULL
+    "gate" SMALLINT
 );
 
 CREATE TABLE IF NOT EXISTS tickets (

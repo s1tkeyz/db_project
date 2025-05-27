@@ -1,8 +1,15 @@
+from datetime import datetime
 from services.abstract.scheduling import SchedulingServiceABC
 from schemas.scheduling import *
 from database.wrapper.postgresql import AsyncpgConnectionWrapper
+from .cache_service import CacheService
+from .notification_service import NotificationService
 
 class SchedulingService(SchedulingServiceABC):
+    def __init__(self):
+        self.cache = CacheService()
+        self.notifications = NotificationService()
+
     async def add_airline(self, airline: Airline) -> tuple[bool, str]:
         query = """
         INSERT INTO airlines
@@ -114,15 +121,31 @@ class SchedulingService(SchedulingServiceABC):
         return (False, "Unable to add departure data")
     
     async def get_departures_pivot(self) -> list[DepartureInfo] | None:
+        """Получает список рейсов"""
+        today = datetime.utcnow().date().isoformat()
+        
+        # Пробуем получить из кэша
+        cached_schedule = await self.cache.get_schedule(today)
+        if cached_schedule:
+            return [DepartureInfo(**item) for item in cached_schedule]
+
+        # Если нет в кэше, получаем из БД
         query = """
         SELECT *
         FROM departures_pivot
+        WHERE DATE(scheduled_time) = CURRENT_DATE
         """
         conn = AsyncpgConnectionWrapper()
         if not await conn.connect():
             return None
+        
         rows = await conn.fetch(query)
-        return [DepartureInfo(**row) for row in rows]
+        if rows:
+            # Кэшируем результат
+            schedule_data = [dict(row) for row in rows]
+            await self.cache.cache_schedule(today, schedule_data)
+            return [DepartureInfo(**row) for row in rows]
+        return None
 
     async def update_departure(self, departure_id: int, data: Departure) -> tuple[bool, str]:
         query = """
@@ -174,3 +197,47 @@ class SchedulingService(SchedulingServiceABC):
         
         rows = await conn.fetch(query, from_date, until_date)
         return [TimetableRow(**row) for row in rows]
+
+    async def update_departure_status(self, departure_id: int, status: str, actual_time: datetime = None, gate: int = None) -> tuple[bool, str]:
+        """Обновляет статус рейса"""
+        query = """
+        UPDATE departures
+        SET status = $1, actual_time = COALESCE($2, actual_time), gate = COALESCE($3, gate)
+        WHERE departure_id = $4
+        RETURNING scheduled_time, actual_time, gate
+        """
+        conn = AsyncpgConnectionWrapper()
+        if not await conn.connect():
+            return (False, "DB connection failed")
+        
+        result = await conn.fetchrow(query, status, actual_time, gate, departure_id)
+        await conn.close()
+
+        if result:
+            # Кэшируем обновленный статус
+            status_data = {
+                "status": status,
+                "actual_time": actual_time.isoformat() if actual_time else None,
+                "gate": gate,
+                "scheduled_time": result["scheduled_time"].isoformat()
+            }
+            await self.cache.cache_flight_status(departure_id, status_data)
+
+            # Отправляем уведомления
+            await self.notifications.publish_flight_status_change(
+                departure_id=departure_id,
+                status=status,
+                scheduled_time=result["scheduled_time"],
+                actual_time=actual_time or result["actual_time"]
+            )
+
+            # Если изменился гейт, отправляем дополнительное уведомление
+            if gate and gate != result["gate"]:
+                await self.notifications.publish_gate_change(
+                    departure_id=departure_id,
+                    new_gate=gate,
+                    scheduled_time=result["scheduled_time"]
+                )
+
+            return (True, "OK")
+        return (False, "Departure not found")

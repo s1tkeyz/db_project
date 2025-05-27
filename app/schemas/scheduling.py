@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Literal
+from typing import Literal, Optional
 from datetime import date, datetime
 
 class Airline(BaseModel):
@@ -41,8 +41,8 @@ class Departure(BaseModel):
     flight_id: int
     scheduled_time: datetime
     actual_time: datetime
-    status: str = ""
-    gate: int = 0
+    status: Literal["ON_TIME", "DELAYED", "BOARDING", "DEPARTED", "CANCELLED"] = "ON_TIME"
+    gate: Optional[int] = None
 
 class DepartureInfo(BaseModel):
     departure_id: int
@@ -51,6 +51,9 @@ class DepartureInfo(BaseModel):
     flight_number: int
     scheduled_time: datetime
     destination: str
+    actual_time: Optional[datetime] = None
+    status: str = "ON_TIME"
+    gate: Optional[int] = None
 
 class TimetableDates(BaseModel):
     from_date: datetime

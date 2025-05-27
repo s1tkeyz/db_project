@@ -101,3 +101,28 @@ async def add_departure(request: Request, data: DepartureData = Form()):
         "status": ok,
         "message": msg
     })
+
+@router.post("/update-status")
+async def update_flight_status(request: Request, departure_id: int, status: str, actual_time: datetime = None, gate: int = None):
+    """Обновляет статус рейса"""
+    id, emp = await token_service.get_user_info(request.cookies.get("AccessToken"))
+    if id is None or not emp:
+        return JSONResponse({
+            "status": False,
+            "message": "Unauthorized"
+        }, status_code=401)
+
+    ok, msg = await scheduling_service.update_departure_status(departure_id, status, actual_time, gate)
+    return JSONResponse({
+        "status": ok,
+        "message": msg
+    })
+
+@router.get("/timetable")
+async def get_timetable(request: Request):
+    """Получает расписание рейсов"""
+    departures = await scheduling_service.get_departures_pivot()
+    return templates.TemplateResponse("timetable.html", {
+        "request": request,
+        "items": departures
+    })
